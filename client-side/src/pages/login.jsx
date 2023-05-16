@@ -144,6 +144,7 @@ export const LoginForm = () => {
       //setelah menerima token akan di navigate ke home
       setTimeout(() => {
         navigate("/");
+        window.location.reload();
       }, 1500);
     } catch (err) {
       console.log(err);

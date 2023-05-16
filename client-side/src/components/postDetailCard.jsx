@@ -1,30 +1,30 @@
-import { Card, CardHeader, Flex, Avatar, Box, Heading, Text, Button, IconButton, CardBody, Image, CardFooter, Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
+import { Card, CardHeader, Flex, Avatar, Box, Heading, Text, Button, IconButton, CardBody, Image, CardFooter, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { BiLike, BiChat, BiShare } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { LikeButton } from "./likeButton";
 
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const token = localStorage.getItem("token");
 
-export function ContentCard() {
+export function ContentDetailCard() {
   const [posts, setPosts] = useState([]);
-  const [onlike, setOnLike] = useState(false);
+  const [likes, setLikes] = useState(0);
   const navigate = useNavigate();
+  let { id } = useParams();
 
   useEffect(() => {
-    async function fetchPosts() {
-      const postData = await axios.get("http://localhost:2000/post/get", {
+    async function fetchDetailPosts() {
+      const postData = await axios.get(`http://localhost:2000/post/get/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(postData.data);
+      console.log(postData.data);
       setPosts(postData.data.results);
     }
-    fetchPosts();
+    fetchDetailPosts();
   }, []);
 
   const formatDate = (dateString) => {
@@ -40,11 +40,21 @@ export function ContentCard() {
     return formattedDate;
   };
 
+  const onLike = async (post_id) => {
+    const result = await axios.post(`http://localhost:2000/like/like/${post_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(result);
+    alert(result.data.message);
+  };
+
   return (
     <Box>
       {posts.map((post) => {
         return (
-          <Card key={post.id} maxW="xl" mb={4}>
+          <Card maxW="3xl" mb={4}>
             <CardHeader>
               <Flex spacing="4">
                 <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
@@ -55,28 +65,29 @@ export function ContentCard() {
                     <Text>{formatDate(post.created_date)}</Text>
                   </Box>
                 </Flex>
+                {/* <IconButton variant="ghost" colorScheme="gray" aria-label="See menu" icon={<BsThreeDotsVertical />} /> */}
 
                 <Menu>
                   <MenuButton as={IconButton} aria-label="Options" icon={<BsThreeDotsVertical />} variant="ghost" colorScheme="gray" />
                   <MenuList>
-                    {token  ? (
-                      <>
-                        <MenuItem>Edit</MenuItem>
-                        <MenuItem>Delete</MenuItem>
-                      </>
-                    ) : (
-                      <MenuItem>Report</MenuItem>
-                    )}
+                    <MenuItem>Edit</MenuItem>
+                    <MenuItem>Delete</MenuItem>
+                    <MenuItem>Report</MenuItem>
                   </MenuList>
                 </Menu>
               </Flex>
             </CardHeader>
-            <Link href={`http://localhost:3000/post/${post.id}`}>
-              <CardBody>
-                <Text textDecoration="none">{post.caption}</Text>
-              </CardBody>
-              <Image objectFit="cover" src={post.image} alt="Chakra UI" />
-            </Link>
+            <CardBody>
+              <Text>{post.caption}</Text>
+            </CardBody>
+            <Image objectFit="cover" src={post.image} alt="image content" />
+
+            <Flex flex="1" p="4" alignItems="center" flexWrap="wrap">
+              <Box>
+                <Heading size="sm">usernameComment</Heading>
+                <Text>ini contoh commentnya</Text>
+              </Box>
+            </Flex>
 
             <CardFooter
               justify="space-between"
@@ -87,8 +98,9 @@ export function ContentCard() {
                 },
               }}
             >
-              <LikeButton post_id={post.id} />
-
+              <Button onClick={() => onLike(post.post_id)} flex="1" variant="ghost" leftIcon={<BiLike />}>
+                {post.likes} Like
+              </Button>
               <Button flex="1" variant="ghost" leftIcon={<BiChat />}>
                 Comment
               </Button>

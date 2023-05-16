@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
           name: "user_id",
         },
       });
+      User.hasMany(models.Like, {
+        foreignKey: {
+          name: "user_id",
+        },
+      });
     }
   }
   User.init(
@@ -49,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
+      },
+      verification_token: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+        // allowNull: false,
       },
     },
     {

@@ -1,11 +1,11 @@
-import { SimpleSidebar } from "../components/sidebar";
-import { ContentCard } from "../components/card";
+import { Hive } from "../components/hive";
+// import { ContentCard } fro../components/cardive";
 // import { Navbar } from "../components/navbar";
 
 export const HivePage = () => {
   return (
     <div>
-      <SimpleSidebar />
+      <Hive />
       {/* <ContentCard /> */}
     </div>
   );

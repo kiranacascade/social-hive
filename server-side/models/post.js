@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
           name: "post_id",
         },
       });
+      Post.hasMany(models.Like, {
+        foreignKey: {
+          name: "post_id",
+        },
+      });
     }
   }
   Post.init(
@@ -31,10 +36,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      total_likes: {
-        type: DataTypes.INTEGER,
+      is_active: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: true,
       },
     },
     {

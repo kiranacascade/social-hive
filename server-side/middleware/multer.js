@@ -1,23 +1,23 @@
-const multer = require("multer");
+// const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: (req, res, cb) => {
-    cb(null, "Public");
-  },
-  filename: (re, file, cb) => {
-    cb(null, "PIMG" + "-" + Date.now() + Math.round(Math.random() * 1000000000) + "." + file.mimetype.split("/")[1]);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, res, cb) => {
+//     cb(null, "public");
+//   },
+//   filename: (re, file, cb) => {
+//     cb(null, path.parse(file.originalname).name + "-" + Date.now() + path.extname(file.originalname));
+//   },
+// });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.split("/")[1] === "png" || file.mimetype.split("/")[1] === "jgp" || file.mimetype.split("/")[1] === "jpeg") {
-    cb(null, true);
-  } else {
-    cb("File type not allowed", false);
-  }
-};
+// const fileFilter = (req, file, cb) => {
+//   if (file.mimetype.split("/")[1] === "png" || file.mimetype.split("/")[1] === "jgp" || file.mimetype.split("/")[1] === "jpeg") {
+//     cb(null, true);
+//   } else {
+//     cb("File type not allowed", false);
+//   }
+// };
 
-express.multerUpload = multer({ storage, fileFilter });
+// express.multerUpload = multer({ storage, fileFilter });
 
 /* 
 // ini untuk di routes nya

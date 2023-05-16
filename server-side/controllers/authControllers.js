@@ -4,6 +4,7 @@ const db = require("../models");
 const dotenv = require("dotenv");
 const user = db.User;
 const profile = db.Profile;
+const { validationResult } = require("express-validator");
 const { Op } = require("sequelize");
 const transporter = require("../helper/transporter");
 const fs = require("fs");
@@ -15,7 +16,15 @@ module.exports = {
     try {
       const { username, email, password, passwordConfirmation } = req.body;
 
-      console.log(req.body);
+      // console.log(req.body);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).send({
+          status: false,
+          message: "Email should be in correct email address format",
+          errors: errors.array(),
+        });
+      }
 
       if (!username || !email || !password || !passwordConfirmation) {
         return res.status(400).send({
@@ -81,7 +90,22 @@ module.exports = {
       });
 
       const payload = { id: data.id };
-      const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "5h" });
+      const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "99y" });
+
+      await user.update(
+        { verification_token: token },
+        {
+          where: {
+            id: data.id,
+          },
+        }
+      );
+
+      const updatedData = await user.findOne({
+        where: {
+          id: data.id,
+        },
+      });
 
       const verificationLink = `http://localhost:3000/verification/${token}`;
 
@@ -108,8 +132,7 @@ module.exports = {
       res.status(200).send({
         status: true,
         message: "Register success. Please click on the link that has just been sent to your email address to verify your account!",
-        data: data,
-        token,
+        data: updatedData,
       });
     } catch (err) {
       console.log(err);
@@ -165,7 +188,7 @@ module.exports = {
       }
 
       const payload = { id: userExist.id, is_verified: userExist.is_verified };
-      const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1h" });
+      const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "12h" });
 
       res.status(200).send({
         status: true,
@@ -187,6 +210,8 @@ module.exports = {
         },
       });
 
+      console.log(userExist);
+
       await user.update(
         { is_verified: true },
         {
@@ -195,6 +220,8 @@ module.exports = {
           },
         }
       );
+
+      console.log("test");
       res.status(200).send({
         status: true,
         message: "Your account is verified",

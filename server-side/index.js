@@ -12,8 +12,16 @@ app.get("/", (req, res) => {
   res.send("This is my API");
 });
 
-const { authRouter } = require("./routers");
-app.use("/auth", authRouter);
+const { authRouters, postRouters, commentRouters, likeRouters } = require("./routers");
+app.use("/auth", authRouters);
+app.use("/post", postRouters);
+app.use("/comment", commentRouters);
+app.use("/like", likeRouters);
+
+app.get("/posts/:name", (req, res) => {
+  const path = __dirname + "/public/posts/" + req.params.name;
+  res.sendFile(path);
+});
 
 app.listen(process.env.PORT, () => {
   // db.sequelize.sync({ alter: true });
