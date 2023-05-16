@@ -38,7 +38,6 @@ export const LikeButton = ({ post_id }) => {
       }
       console.log(err);
     }
-    // console.log("result= ", result);
 
     // if ()
     const postData = await axios.get(`http://localhost:2000/post/get/${post_id}`, {
@@ -48,8 +47,6 @@ export const LikeButton = ({ post_id }) => {
     });
     //   console.log(postData.data);
     setLikes(postData.data.results[0].likes);
-
-    // alert(result.data.message);
   };
   return (
     <Button onClick={onLike} flex="1" variant="ghost" leftIcon={<BiLike />}>

@@ -1,18 +1,23 @@
 import { Card, CardHeader, Flex, Avatar, Box, Heading, Text, Button, IconButton, CardBody, Image, CardFooter, Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
-import { BiLike, BiChat, BiShare } from "react-icons/bi";
+import { BiChat, BiShare } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LikeButton } from "./likeButton";
-
+import { useDisclosure } from "@chakra-ui/react";
+import { ModalEditCaption } from "./modalEditCaption";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { AvatarPic } from "./avatar";
+import jwt_decode from "jwt-decode";
 
 const token = localStorage.getItem("token");
 
 export function ContentCard() {
   const [posts, setPosts] = useState([]);
-  const [onlike, setOnLike] = useState(false);
+
   const navigate = useNavigate();
+
+  const decodedToken = jwt_decode(token);
 
   useEffect(() => {
     async function fetchPosts() {
@@ -21,7 +26,7 @@ export function ContentCard() {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(postData.data);
+
       setPosts(postData.data.results);
     }
     fetchPosts();
@@ -48,7 +53,8 @@ export function ContentCard() {
             <CardHeader>
               <Flex spacing="4">
                 <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-                  <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
+                  <AvatarPic user_id={post.user_id} />
+                  {/* <Avatar name="Social Hive" src={`http://localhost:2000/profile/picture/${post.user_id}`} /> */}
 
                   <Box>
                     <Heading size="sm">{post.username}</Heading>
@@ -59,10 +65,9 @@ export function ContentCard() {
                 <Menu>
                   <MenuButton as={IconButton} aria-label="Options" icon={<BsThreeDotsVertical />} variant="ghost" colorScheme="gray" />
                   <MenuList>
-                    {token  ? (
+                    {token && decodedToken.id == post.user_id ? (
                       <>
-                        <MenuItem>Edit</MenuItem>
-                        <MenuItem>Delete</MenuItem>
+                        <ModalEditCaption data_post={post} />
                       </>
                     ) : (
                       <MenuItem>Report</MenuItem>
@@ -89,9 +94,10 @@ export function ContentCard() {
             >
               <LikeButton post_id={post.id} />
 
-              <Button flex="1" variant="ghost" leftIcon={<BiChat />}>
+              <Button flex="1" onClick={() => navigate(`/post/${post.id}`)} variant="ghost" leftIcon={<BiChat />}>
                 Comment
               </Button>
+
               <Button flex="1" variant="ghost" leftIcon={<BiShare />}>
                 Share
               </Button>

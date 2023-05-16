@@ -1,10 +1,15 @@
 import { Card, CardHeader, Flex, Avatar, Box, Heading, Text, Button, IconButton, CardBody, Image, CardFooter, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import { BiLike, BiChat, BiShare } from "react-icons/bi";
+import { BiChat, BiShare } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { LikeButton } from "./likeButton";
 
+import { ModalEditCaption } from "./modalEditCaption";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import { Comment } from "./comment";
+import { AvatarPic } from "./avatar";
 
 const token = localStorage.getItem("token");
 
@@ -13,6 +18,7 @@ export function ContentDetailCard() {
   const [likes, setLikes] = useState(0);
   const navigate = useNavigate();
   let { id } = useParams();
+  const decodedToken = jwt_decode(token);
 
   useEffect(() => {
     async function fetchDetailPosts() {
@@ -40,54 +46,42 @@ export function ContentDetailCard() {
     return formattedDate;
   };
 
-  const onLike = async (post_id) => {
-    const result = await axios.post(`http://localhost:2000/like/like/${post_id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(result);
-    alert(result.data.message);
-  };
-
   return (
     <Box>
       {posts.map((post) => {
         return (
-          <Card maxW="3xl" mb={4}>
+          <Card key={post.id} maxW="3xl" mb={4}>
             <CardHeader>
               <Flex spacing="4">
                 <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-                  <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
+                  <AvatarPic user_id={post.user_id} />
 
                   <Box>
                     <Heading size="sm">{post.username}</Heading>
                     <Text>{formatDate(post.created_date)}</Text>
                   </Box>
                 </Flex>
-                {/* <IconButton variant="ghost" colorScheme="gray" aria-label="See menu" icon={<BsThreeDotsVertical />} /> */}
 
                 <Menu>
                   <MenuButton as={IconButton} aria-label="Options" icon={<BsThreeDotsVertical />} variant="ghost" colorScheme="gray" />
                   <MenuList>
-                    <MenuItem>Edit</MenuItem>
-                    <MenuItem>Delete</MenuItem>
-                    <MenuItem>Report</MenuItem>
+                    {token && decodedToken.id == post.user_id ? (
+                      <>
+                        <ModalEditCaption data_post={post} />
+                      </>
+                    ) : (
+                      <MenuItem>Report</MenuItem>
+                    )}
                   </MenuList>
                 </Menu>
               </Flex>
             </CardHeader>
-            <CardBody>
-              <Text>{post.caption}</Text>
-            </CardBody>
-            <Image objectFit="cover" src={post.image} alt="image content" />
 
-            <Flex flex="1" p="4" alignItems="center" flexWrap="wrap">
-              <Box>
-                <Heading size="sm">usernameComment</Heading>
-                <Text>ini contoh commentnya</Text>
-              </Box>
-            </Flex>
+            <CardBody>
+              <Text textDecoration="none">{post.caption}</Text>
+            </CardBody>
+            <Image objectFit="cover" src={post.image} alt="Chakra UI" />
+            <Comment post_id={post.id} />
 
             <CardFooter
               justify="space-between"
@@ -98,9 +92,8 @@ export function ContentDetailCard() {
                 },
               }}
             >
-              <Button onClick={() => onLike(post.post_id)} flex="1" variant="ghost" leftIcon={<BiLike />}>
-                {post.likes} Like
-              </Button>
+              <LikeButton post_id={post.id} />
+
               <Button flex="1" variant="ghost" leftIcon={<BiChat />}>
                 Comment
               </Button>

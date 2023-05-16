@@ -121,7 +121,7 @@ module.exports = {
       });
       res.status(200).send({
         status: true,
-        message: `Post with id no: ${req.params.id} has been edited`,
+        message: `Successfully edited caption`,
       });
     } catch (err) {
       console.log(err);

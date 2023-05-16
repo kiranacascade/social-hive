@@ -1,14 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./pages/error";
 import { HomePage } from "./pages/home";
-import { HivePage } from "./pages/hive";
 import { LoginForm } from "./pages/login";
 import { RegistrationForm } from "./pages/register";
 import Verification from "./pages/verification";
 import { PostDetailPage } from "./pages/postDetail";
-// import { ProfilePage } from "./pages/profilePage";
-// import { AdminForm } from "./pages/adminForm";
-// import Admin from "./pages/admin";
+import { ProfilePage } from "./pages/profilePage";
+
+const token = localStorage.getItem("token");
 
 const router = createBrowserRouter([
   {
@@ -20,10 +19,7 @@ const router = createBrowserRouter([
   { path: "/register", element: <RegistrationForm /> },
   { path: "/verification/:token", element: <Verification /> },
   { path: "/post/:id", element: <PostDetailPage /> },
-  // { path: "/hive", element: <HivePage /> },
-  // { path: "/profile", element: <ProfilePage /> },
-  // { path: "/admin", element: <Admin /> },
-  // { path: "/adminForm", element: <AdminForm /> },
+  { path: "/profile", element: <ProfilePage /> },
 ]);
 
 function App() {

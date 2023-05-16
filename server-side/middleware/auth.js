@@ -34,4 +34,13 @@ module.exports = {
     }
     return res.status(401).send("Your account hasn't been verified");
   },
+  onLoggedIn: async (req, res, next) => {
+    let token = req.headers.authorization;
+    if (token) {
+      // Token is available, redirect to home page
+      return res.redirect("/");
+    } else {
+      return next();
+    }
+  },
 };

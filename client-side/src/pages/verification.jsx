@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import verifyIllustration from "../assets/verify.png";
 import axios from "axios";
 
+
 function Verification() {
   const navigate = useNavigate();
 

@@ -5,5 +5,5 @@ import { Hive } from "../components/hive";
 const token = localStorage.getItem("token");
 
 export const HomePage = () => {
-  return <div>{token ? <Hive /> : <Heroes />}</div>;
+  return <div>{token === "" ? <Heroes /> : <Hive />}</div>;
 };
